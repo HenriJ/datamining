@@ -37,7 +37,7 @@ public class Debug {
                         query.setString(2, path);
                         query.setString(3, name);
                         query.setLong(4, size);
-                        query.setInt(6, 0);
+                        query.setInt(5, 0);
 
                         query.execute();
                     }
