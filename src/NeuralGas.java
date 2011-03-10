@@ -117,11 +117,11 @@ public class NeuralGas implements Runnable{
             s.incrementError(ds);
             
             // Attract it
-            s.attract(x,0.05);	// e_w factor
+            s.attract(x,0.1);	// e_w factor
             
             // Attract connected nodes
             for(Node n : s.neighbours()) {
-            	n.attract(x,0.0006);	// e_n factor
+            	n.attract(x,0.01);	// e_n factor
             }
             
             // Increment edges from s
@@ -141,7 +141,7 @@ public class NeuralGas implements Runnable{
         		nodes.remove(n);
         	}
             
-        	if(age % 200 == 0)
+        	if(age % 200 == 0 && nodes.size() < 100)
         	{
         		// Look for the node with largest error
         		Node u = null;
@@ -170,7 +170,7 @@ public class NeuralGas implements Runnable{
         	
         	// Decrease the error of all nodes
         	for(Node n : nodes) {
-        		n.decreaseError(0.0005);
+        		n.decreaseError(0.05);
         	}
         	
             try {
