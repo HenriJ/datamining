@@ -43,6 +43,10 @@ public class NeuralGas implements Runnable{
         return x;
     }
 
+    public Distribution getDistribution() {
+        return distribution;
+    }
+
     public List<List<Node>> connexGraphs() {
         List<List<Node>> graphs = new ArrayList<List<Node>>();
 
