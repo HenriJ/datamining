@@ -11,7 +11,7 @@ import java.util.Random;
 
 public class DbDistribution implements Distribution {
 
-	HashMap<Integer, double[]> map = new HashMap<Integer, double[]>();
+	HashMap<Long, double[]> map = new HashMap<Long, double[]>();
 	ArrayList<double[]> list = null;
 	int dim = 0;
 	Random r = new Random();
@@ -31,10 +31,10 @@ public class DbDistribution implements Distribution {
 		dim = rs.getInt(1);
 		rs.close();
 		
-		rs = stmt.executeQuery("SELECT ip,object,instances FROM stat");
+		rs = stmt.executeQuery("SELECT ip,object,instances FROM stats");
 		while(rs.next()) {
 			
-			int ip = rs.getInt(1);
+			long ip = rs.getLong(1);
 			int object = rs.getInt(2);
 			int instances = rs.getInt(3);
 			
@@ -45,7 +45,7 @@ public class DbDistribution implements Distribution {
 				map.put(ip,table);
 			}
 			
-			table[object] = (double)instances;
+			table[object-1] = (double)instances;
 		}
 		
 		rs.close();
