@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Stack;
 
 import distributions.Distribution;
 
@@ -14,11 +15,13 @@ public class NeuralGas implements Runnable{
     private int age;
     private int currentId = 0;
     private int nanosleep;
+    private int criterion;
 
     private double[] x;
 
-    public NeuralGas(Distribution distribution, int nanosleep) {
+    public NeuralGas(Distribution distribution, int criterion, int nanosleep) {
         this.distribution = distribution;
+        this.criterion = criterion;
         this.nanosleep = nanosleep;
 
         nodes = new ArrayList<Node>();
@@ -40,10 +43,49 @@ public class NeuralGas implements Runnable{
         return x;
     }
 
+    public List<List<Node>> connexGraphs() {
+        List<List<Node>> graphs = new ArrayList<List<Node>>();
+
+        List<Node> remainingNodes = new ArrayList<Node>(nodes);
+
+        while (remainingNodes.size() > 0) {
+            List<Node> graph = new ArrayList<Node>();
+            Stack<Node> stack = new Stack<Node>();
+            stack.push(remainingNodes.remove(0));
+
+            while(stack.size() > 0) {
+                Node n = stack.pop();
+                graph.add(n);
+                for (Node v : n.neighbours()) {
+                    if (remainingNodes.contains(v)) {
+                        stack.push(v);
+                        remainingNodes.remove(v);
+                    }
+                }
+            }
+
+            graphs.add(graph);
+        }
+
+        return graphs;
+    }
+
+    public boolean isCriterionMet() {
+        System.out.println(connexGraphs().size());
+
+        return (connexGraphs().size() == criterion);
+    }
+
     public void run()
     {
         while(true) {
             age++;
+
+            if (age % 1000 == 0) {
+                if (isCriterionMet()) {
+                    break;
+                }
+            }
 
             // Generate a random vector with the distribution
             x = distribution.generateVector();

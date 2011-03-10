@@ -11,7 +11,7 @@ public class Test {
 
         Distribution d = new MergedDistribution(r1, r2, r3);
 
-        NeuralGas gas = new NeuralGas(d, 900000);
+        NeuralGas gas = new NeuralGas(d, 3, 900000);
 
         Canvas c = new Canvas("Nodes", gas, W, H, 30);
     }
