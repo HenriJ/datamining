@@ -15,12 +15,13 @@ public class RectDistribution implements Distribution {
 		this.h = h;
 	}
 	
-	
+	@Override
 	public int dimension() {
 		
 		return 2;
 	}
-
+	
+	@Override
 	public double[] generateVector() {
 		
 		double[] v = new double[2];
