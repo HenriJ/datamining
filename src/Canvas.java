@@ -24,8 +24,9 @@ public class Canvas implements Runnable
 
     public Canvas(String title, NeuralGas gas, int w, int h, int sleep)
     {
-		this.gas = gas;
-		frame = new JFrame();
+        this.gas = gas;
+        frame = new JFrame();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         canvas = new CanvasPane();
         frame.setContentPane(canvas);
         frame.setTitle(title);
