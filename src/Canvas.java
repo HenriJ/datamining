@@ -19,19 +19,21 @@ public class Canvas implements Runnable
     private Color nodeColor;
 
     private List<Node> nodes;
+	private final NeuralGas n;
 
-    public Canvas(String title, Noder N, int sleep)
+    public Canvas(String title, NeuralGas gas, int w, int h, int sleep)
     {
-        frame = new JFrame();
+		n = gas;
+		frame = new JFrame();
         canvas = new CanvasPane();
         frame.setContentPane(canvas);
         frame.setTitle(title);
-        canvas.setPreferredSize(new Dimension(N.getW(), N.getH()));
+        canvas.setPreferredSize(new Dimension(w, h));
         backgroundColor = Color.BLACK;
         nodeColor =  Color.WHITE;
         frame.pack();
         this.sleep = sleep;
-        this.nodes = N.getNodes();
+        this.nodes = n.getNodes();
         setVisible(true);
         T = new Thread(this);
         T.start();
@@ -56,11 +58,15 @@ public class Canvas implements Runnable
             erase();
 
             graphic.setColor(nodeColor);
+            
             ArrayList<Node> copy = new ArrayList<Node>(nodes);
             for(Node n : copy) {
+            	
                 double[] x = n.getX();
                 fill(new Ellipse2D.Double(x[0] - 3, x[1] - 3, 6, 6));
-                for (Node f : n.getFriends()) {
+                
+                ArrayList<Node> neighbours_copy = new ArrayList<Node>(n.neighbours());
+                for (Node f : neighbours_copy) {
                     double[] fx = f.getX();
                     drawLine(x[0], x[1], fx[0], fx[1]);
                 }

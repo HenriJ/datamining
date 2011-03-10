@@ -1,42 +1,23 @@
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
-public class Node implements Runnable
+public class Node
 {
-    private Thread T;
-
     private int id;
-
-    private double[] x;
-
-    private Noder N;
-
-    private int age;
-
-    private Node[] friends;
-
-    private Random r;
-
-    public Node(int id, double[] x, Noder N, boolean start)
+    private double[] w;
+    
+    private HashMap<Node,Integer> edges;
+    double error;
+    
+    public Node(int id, double[] x)
     {
         this.id = id;
-        this.x = x;
-        this.N = N;
 
-        r = new Random();
-
-        age = r.nextInt(99);
-
-        if (start) {
-            start();
-        }
-    }
-
-    public void start() {
-        friends();
-
-        T = new Thread(this);
-        T.start();
+        w = x;
+        edges = new HashMap<Node,Integer>();
+        error = 0;
     }
 
     public double getId() {
@@ -44,67 +25,96 @@ public class Node implements Runnable
     }
 
     public double[] getX() {
-        return x;
+        return w;
     }
 
-    private void friends() {
-        Node[] newfriends = new Node[2];
-        double[] dists = new double[2];
-        dists[0] = Double.POSITIVE_INFINITY;
-        dists[1] = Double.POSITIVE_INFINITY;
-        ArrayList<Node> nodes = new ArrayList<Node>(N.getNodes());
-        for (Node n : nodes) {
-            if (n.getId() != id) {
-                double dist = dist(n);
-                if (dist < dists[0]) {
-                    newfriends[1] = newfriends[0];
-                    dists[1] = dists[0];
-                    newfriends[0] = n;
-                    dists[0] = dist;
-                } else if (dist < dists[1]) {
-                    newfriends[1] = n;
-                    dists[1] = dist;
-                }
-            }
-        }
-        friends = newfriends;
-    }
-
-    public Node[] getFriends() {
-        return friends;
-    }
-
-    public double dist(Node n) {
+    public double dist2(double[] x) {
         double d = 0;
         for(int i = 0; i < x.length; i++) {
-            d += Math.pow(n.x[i] - x[i], 2);
+            d += Math.pow(w[i] - x[i], 2);
         }
         return d;
     }
 
-    public void run()
+    public double dist2(Node n) {
+        return dist2(n.w);
+    }
+    
+    public void addEdge(Node n) {
+    	edges.put(n, 0);
+    	n.edges.put(this,0);
+    }
+    
+    public void removeEdge(Node n) {
+    	edges.remove(n);
+    	n.edges.remove(this);
+    }
+    
+    public void incrementEdges() {
+    	for(Integer age : edges.values()) {
+    		age++;
+    	}
+    }
+    
+    public void removeOldEdges(int maxAge) {
+    	
+    	Set<Node> remove = new HashSet<Node>();
+    	
+    	for(Node n : edges.keySet()) {
+    		int age = edges.get(n);
+    		if(age > maxAge) remove.add(n);
+    	}
+    	
+    	for(Node n : remove) {
+    		edges.remove(n);
+    	}
+    }
+    
+    public Set<Node> neighbours() {
+    	return edges.keySet();
+    }
+    
+    public double error() {
+    	return error;
+    }
+    
+    public void incrementError(double value) {
+    	error+= value;
+    }
+    
+    public void decreaseError(double beta) {
+    	error*= (1-beta);
+    }
+    
+    public void move(double[] v) {
+    	for(int i = 0; i < v.length; i++) {
+    		w[i]+= v[i];
+    	}
+    }
+    
+    public void attract(double[] x, double factor) {
+    	for(int i = 0; i < x.length; i++) {
+    		w[i]+= factor*(x[i]-w[i]);
+    	}
+    }
+    
+    public Node createNode(Node n, int id, double alpha)
     {
-        while(true) {
-            age++;
-
-            for (Node f : friends) {
-                double[] fx = f.getX();
-                double d = dist(f);
-                for(int i = 0; i < x.length; i++) {
-                    x[i] += (0.001 / d) * (2000 - d) * (x[i] - fx[i]);
-                    //+ r.nextDouble() - 0.5;
-                }
-            }
-
-            if (age % 100 == 0) {
-                friends();
-            }
-
-            try {
-                Thread.sleep(0, N.sleep);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+    	double[] x = new double[w.length];
+    	for(int i = 0; i < x.length; i++) {
+    		x[i] = (w[i] + n.w[i])/2;
+    	}
+    	
+    	Node r = new Node(id, x);
+    	
+    	this.removeEdge(n);
+    	this.addEdge(r);
+    	r.addEdge(n);
+    	
+    	this.error*= alpha;
+    	n.error*= alpha;
+    	r.error = this.error;
+    	
+    	return r;
     }
 }
