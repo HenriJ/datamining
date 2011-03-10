@@ -1,6 +1,7 @@
 import javax.swing.*;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -67,29 +68,34 @@ public class Canvas implements Runnable
 
     public void run()
     {
-        while(true) {
+        while(true) { 
             erase();
 
-            // Printing the nodes
-            graphic.setColor(nodeColor);
-            ArrayList<Node> copy = new ArrayList<Node>(nodes);
-            for(Node n : copy) {
-                Point p = markChange(n.getX());
-                fill(new Ellipse2D.Double(p.x - 3, p.y - 3, 6, 6));
+            try {
+            	// Printing the nodes
+            	graphic.setColor(nodeColor);
+            	ArrayList<Node> copy = new ArrayList<Node>(nodes);
+            	for(Node n : copy) {
+            		Point p = markChange(n.getX());
+            		fill(new Ellipse2D.Double(p.x - 3, p.y - 3, 6, 6));
 
-                ArrayList<Node> neighbours_copy = new ArrayList<Node>(n.neighbours());
-                for (Node f : neighbours_copy) {
-                    Point pf = markChange(f.getX());
-                    drawLine(p.x, p.y, pf.x, pf.y);
-                }
+            		ArrayList<Node> neighbours_copy = new ArrayList<Node>(n.neighbours());
+            		for (Node f : neighbours_copy) {
+            			Point pf = markChange(f.getX());
+            			drawLine(p.x, p.y, pf.x, pf.y);
+            		}
+            	}
             }
-
+            catch(ConcurrentModificationException e)
+            {
+            	continue;
+            }
             // Printing the last random vector given by the distribution
             graphic.setColor(vectorColor);
             Point p = markChange(gas.lastVector());
             drawLine(p.x - 2, p.y, p.x + 2, p.y);
             drawLine(p.x, p.y - 2, p.x, p.y + 2);
-
+            
             repaint();
 
             try {
@@ -183,7 +189,7 @@ public class Canvas implements Runnable
         }
 
         public void keyPressed(KeyEvent e) {
-            System.out.println(e.getKeyCode());
+            //System.out.println(e.getKeyCode());
 
             switch (e.getKeyCode()) {
             case 107: // Key +
