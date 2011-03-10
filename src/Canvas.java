@@ -76,33 +76,32 @@ public class Canvas implements Runnable
             erase();
 
             try {
-            	// Printing the nodes
-            	graphic.setColor(nodeColor);
-            	ArrayList<Node> copy = new ArrayList<Node>(nodes);
-            	for(Node n : copy) {
-            		Point p = markChange(n.getX());
-            		fill(new Ellipse2D.Double(p.x - 3, p.y - 3, 6, 6));
-
-            		ArrayList<Node> neighbours_copy = new ArrayList<Node>(n.neighbours());
-            		for (Node f : neighbours_copy) {
-            			Point pf = markChange(f.getX());
-            			drawLine(p.x, p.y, pf.x, pf.y);
-            		}
-            	}
-            }
-            catch(ConcurrentModificationException e)
-            {
-            	continue;
-            }
-
-            if (showDistribution != null) {
-                // Printing a lot of points of the distribution
-                for (double[] v : showDistribution) {
-                    drawVector(v);
+                    // Printing the nodes
+                    graphic.setColor(nodeColor);
+                    ArrayList<Node> copy = new ArrayList<Node>(nodes);
+                    for(Node n : copy) {
+                        Point p = markChange(n.getX());
+                        fill(new Ellipse2D.Double(p.x - 3, p.y - 3, 6, 6));
+    
+                        ArrayList<Node> neighbours_copy = new ArrayList<Node>(n.neighbours());
+                        for (Node f : neighbours_copy) {
+                            Point pf = markChange(f.getX());
+                            drawLine(p.x, p.y, pf.x, pf.y);
+                        }
+                    }
+    
+                if (showDistribution != null) {
+                    // Printing a lot of points of the distribution
+                    for (double[] v : showDistribution) {
+                        drawVector(v);
+                    }
+                } else {
+                    // Printing the last random vector given by the distribution
+                    drawVector(gas.lastVector());
                 }
-            } else {
-                // Printing the last random vector given by the distribution
-                drawVector(gas.lastVector());
+
+            } catch(ConcurrentModificationException e) {
+                continue;
             }
 
             repaint();
