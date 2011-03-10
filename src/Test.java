@@ -6,8 +6,8 @@ public class Test {
         int W = 800;
         int H = 600;
 
-        Distribution distribution = new RectDistribution(200,200,300,100);
-        NeuralGas gas = new NeuralGas(distribution);
+        Distribution distribution = new RectDistribution(200, 200, 300, 100);
+        NeuralGas gas = new NeuralGas(distribution, 900000);
 
         Canvas c = new Canvas("Nodes", gas, W, H, 30);
     }

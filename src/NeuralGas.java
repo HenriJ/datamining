@@ -14,11 +14,12 @@ public class NeuralGas implements Runnable{
     private Distribution distribution;
     private int age;
     private int currentId = 0;
+    private int nanosleep;
 
-    public NeuralGas(Distribution distribution) {
-    	
+    public NeuralGas(Distribution distribution, int nanosleep) {
         this.distribution = distribution;
-        
+        this.nanosleep = nanosleep;
+
         nodes = new ArrayList<Node>();
 
         // Initialize with 3 nodes
@@ -29,7 +30,7 @@ public class NeuralGas implements Runnable{
         T = new Thread(this);
         T.start();
     }
-    
+
     public List<Node> getNodes() {
         return nodes;
     }
@@ -122,7 +123,7 @@ public class NeuralGas implements Runnable{
         	}
         	
             try {
-                Thread.sleep(2);
+                Thread.sleep(0, nanosleep);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
