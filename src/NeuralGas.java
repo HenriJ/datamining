@@ -13,11 +13,14 @@ public class NeuralGas implements Runnable{
     private Distribution distribution;
     private int age;
     private int currentId = 0;
+    private int nanosleep;
 
-    public NeuralGas(Distribution distribution) {
-    	
+    private double[] x;
+
+    public NeuralGas(Distribution distribution, int nanosleep) {
         this.distribution = distribution;
-        
+        this.nanosleep = nanosleep;
+
         nodes = new ArrayList<Node>();
 
         // Initialize with 3 nodes
@@ -28,9 +31,13 @@ public class NeuralGas implements Runnable{
         T = new Thread(this);
         T.start();
     }
-    
+
     public List<Node> getNodes() {
         return nodes;
+    }
+
+    public double[] lastVector() {
+        return x;
     }
 
     public void run()
@@ -39,7 +46,7 @@ public class NeuralGas implements Runnable{
             age++;
 
             // Generate a random vector with the distribution
-            double[] x = distribution.generateVector();
+            x = distribution.generateVector();
 
             // Search for the nearest and second nearest node
             Node s = null;							// nearest node (winner node)
@@ -121,7 +128,7 @@ public class NeuralGas implements Runnable{
         	}
         	
             try {
-                Thread.sleep(2);
+                Thread.sleep(0, nanosleep);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

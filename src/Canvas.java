@@ -17,23 +17,26 @@ public class Canvas implements Runnable
     private Image canvasImage;
 
     private Color nodeColor;
+    private Color vectorColor;
 
     private List<Node> nodes;
-	private final NeuralGas n;
+	private final NeuralGas gas;
 
     public Canvas(String title, NeuralGas gas, int w, int h, int sleep)
     {
-		n = gas;
-		frame = new JFrame();
+        this.gas = gas;
+        frame = new JFrame();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         canvas = new CanvasPane();
         frame.setContentPane(canvas);
         frame.setTitle(title);
         canvas.setPreferredSize(new Dimension(w, h));
         backgroundColor = Color.BLACK;
         nodeColor =  Color.WHITE;
+        vectorColor = Color.BLUE;
         frame.pack();
         this.sleep = sleep;
-        this.nodes = n.getNodes();
+        this.nodes = gas.getNodes();
         setVisible(true);
         T = new Thread(this);
         T.start();
@@ -57,20 +60,25 @@ public class Canvas implements Runnable
         while(true) {
             erase();
 
+            // Printing the nodes
             graphic.setColor(nodeColor);
-            
             ArrayList<Node> copy = new ArrayList<Node>(nodes);
             for(Node n : copy) {
-            	
                 double[] x = n.getX();
                 fill(new Ellipse2D.Double(x[0] - 3, x[1] - 3, 6, 6));
-                
+
                 ArrayList<Node> neighbours_copy = new ArrayList<Node>(n.neighbours());
                 for (Node f : neighbours_copy) {
                     double[] fx = f.getX();
                     drawLine(x[0], x[1], fx[0], fx[1]);
                 }
             }
+
+            // Printing the last random vector given by the distribution
+            graphic.setColor(vectorColor);
+            double[] v = gas.lastVector();
+            drawLine(v[0] - 2, v[1], v[0] + 2, v[1]);
+            drawLine(v[0], v[1] - 2, v[0], v[1] + 2);
 
             repaint();
 
