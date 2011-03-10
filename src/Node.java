@@ -98,8 +98,8 @@ public class Node
     	}
     }
     
-    public Node createNode(Node n, int id, double alpha)
-    {
+    public Node createNode(Node n, int id, double alpha) {
+        System.out.println(w.length);
     	double[] x = new double[w.length];
     	for(int i = 0; i < x.length; i++) {
     		x[i] = (w[i] + n.w[i])/2;

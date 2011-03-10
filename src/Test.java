@@ -12,7 +12,7 @@ public class Test {
         Distribution r3 = new RectDistribution(100, 200, 150, 150);
         Distribution d = new MergedDistribution(r1, r2, r3);
 
-        DbDistribution dbd = new DbDistribution("riton","datamining","datamining","errr");
+        DbDistribution dbd = new DbDistribution("riton", "datamining", "datamining", "errr", 2);
         
         NeuralGas gas = new NeuralGas(dbd, 16, 900000);
 
