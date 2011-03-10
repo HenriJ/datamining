@@ -1,5 +1,7 @@
 import javax.swing.*;
 
+import distributions.Distribution;
+
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.List;
@@ -28,6 +30,8 @@ public class Canvas implements Runnable
     private double zoom = 1;
     private int panX = 0;
     private int panY = 0;
+
+    private List<double[]> showDistribution;
 
     public Canvas(String title, NeuralGas gas, int w, int h, int sleep)
     {
@@ -90,12 +94,17 @@ public class Canvas implements Runnable
             {
             	continue;
             }
-            // Printing the last random vector given by the distribution
-            graphic.setColor(vectorColor);
-            Point p = markChange(gas.lastVector());
-            drawLine(p.x - 2, p.y, p.x + 2, p.y);
-            drawLine(p.x, p.y - 2, p.x, p.y + 2);
-            
+
+            if (showDistribution != null) {
+                // Printing a lot of points of the distribution
+                for (double[] v : showDistribution) {
+                    drawVector(v);
+                }
+            } else {
+                // Printing the last random vector given by the distribution
+                drawVector(gas.lastVector());
+            }
+
             repaint();
 
             try {
@@ -104,6 +113,14 @@ public class Canvas implements Runnable
                 e.printStackTrace();
             }
         }
+    }
+
+    public void drawVector(double[] v)
+    {
+        Point p = markChange(v);
+        graphic.setColor(vectorColor);
+        drawLine(p.x - 2, p.y, p.x + 2, p.y);
+        drawLine(p.x, p.y - 2, p.x, p.y + 2);
     }
 
     public void draw(Shape shape)
@@ -153,6 +170,22 @@ public class Canvas implements Runnable
         return canvas.getSize();
     }
 
+    public void showDistribution()
+    {
+        if (showDistribution == null) {
+            showDistribution = new ArrayList<double[]>();
+            Distribution d = gas.getDistribution();
+            for (int i = 0; i < 1000; i++) {
+                showDistribution.add(d.generateVector());
+            }
+        }
+    }
+
+    public void hideDistribution()
+    {
+        showDistribution = null;
+    }
+
     public double zoom(double delta) {
         zoom += delta;
         return zoom;
@@ -189,8 +222,6 @@ public class Canvas implements Runnable
         }
 
         public void keyPressed(KeyEvent e) {
-            //System.out.println(e.getKeyCode());
-
             switch (e.getKeyCode()) {
             case 107: // Key +
                 c.zoom(0.1);
@@ -215,17 +246,21 @@ public class Canvas implements Runnable
             case 40: // Key ->
                 c.panY(-5);
                 break;
+
+            case 32: // space key
+                c.showDistribution();
+                break;
             }
         }
 
-        public void keyReleased(KeyEvent arg0) {
-
-            
+        public void keyReleased(KeyEvent e) {
+            if (e.getKeyCode() == 32) {
+                c.hideDistribution();
+            }
         }
 
-        public void keyTyped(KeyEvent arg0) {
+        public void keyTyped(KeyEvent e) {
 
-            
         }
     }
 }
