@@ -51,8 +51,8 @@ public class Node
     }
     
     public void incrementEdges() {
-    	for(Integer age : edges.values()) {
-    		age++;
+    	for(Node n : edges.keySet()) {
+    		edges.put(n,edges.get(n)+1);
     	}
     }
     
@@ -66,7 +66,7 @@ public class Node
     	}
     	
     	for(Node n : remove) {
-    		edges.remove(n);
+    		removeEdge(n);
     	}
     }
     

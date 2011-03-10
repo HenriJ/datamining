@@ -2,6 +2,8 @@ package distributions;
 
 public class DbDistribution implements Distribution {
 
+	
+	
 	@Override
 	public int dimension() {
 		// TODO Auto-generated method stub
