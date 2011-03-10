@@ -4,8 +4,8 @@ import distributions.*;
 
 public class Test {
     public static void main(String[] args) throws SQLException {
-        int W = 800;
-        int H = 600;
+        int W = 1024;
+        int H = 768;
 
         Distribution r1 = new RectDistribution(10, 10, 100, 100);
         Distribution r2 = new RectDistribution(200, 20, 50, 50);
@@ -14,7 +14,7 @@ public class Test {
 
         DbDistribution dbd = new DbDistribution("riton","datamining","datamining","errr");
         
-        NeuralGas gas = new NeuralGas(dbd, 3, 900000);
+        NeuralGas gas = new NeuralGas(dbd, 16, 900000);
 
         Canvas c = new Canvas("Nodes", gas, W, H, 30);
     }

@@ -3,6 +3,8 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.geom.Ellipse2D;
 
 public class Canvas implements Runnable
@@ -20,12 +22,17 @@ public class Canvas implements Runnable
     private Color vectorColor;
 
     private List<Node> nodes;
-	private final NeuralGas gas;
+    private final NeuralGas gas;
+
+    private double zoom = 1;
+    private int panX = 0;
+    private int panY = 0;
 
     public Canvas(String title, NeuralGas gas, int w, int h, int sleep)
     {
         this.gas = gas;
         frame = new JFrame();
+        frame.addKeyListener(new MoveKeyListener(this));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         canvas = new CanvasPane();
         frame.setContentPane(canvas);
@@ -44,15 +51,18 @@ public class Canvas implements Runnable
 
     public void setVisible(boolean visible)
     {
-        if(graphic == null) {
+        if (graphic == null) {
             Dimension size = canvas.getSize();
             canvasImage = canvas.createImage(size.width, size.height);
             graphic = (Graphics2D)canvasImage.getGraphics();
             graphic.setColor(backgroundColor);
             graphic.fillRect(0, 0, size.width, size.height);
-            graphic.setColor(Color.black);
         }
         frame.setVisible(true);
+    }
+
+    public Point markChange(double[] x) {
+        return new Point((int) (x[0] * zoom + panX), (int) (x[1] * zoom + panY));
     }
 
     public void run()
@@ -64,21 +74,21 @@ public class Canvas implements Runnable
             graphic.setColor(nodeColor);
             ArrayList<Node> copy = new ArrayList<Node>(nodes);
             for(Node n : copy) {
-                double[] x = n.getX();
-                fill(new Ellipse2D.Double(x[0] - 3, x[1] - 3, 6, 6));
+                Point p = markChange(n.getX());
+                fill(new Ellipse2D.Double(p.x - 3, p.y - 3, 6, 6));
 
                 ArrayList<Node> neighbours_copy = new ArrayList<Node>(n.neighbours());
                 for (Node f : neighbours_copy) {
-                    double[] fx = f.getX();
-                    drawLine(x[0], x[1], fx[0], fx[1]);
+                    Point pf = markChange(f.getX());
+                    drawLine(p.x, p.y, pf.x, pf.y);
                 }
             }
 
             // Printing the last random vector given by the distribution
             graphic.setColor(vectorColor);
-            double[] v = gas.lastVector();
-            drawLine(v[0] - 2, v[1], v[0] + 2, v[1]);
-            drawLine(v[0], v[1] - 2, v[0], v[1] + 2);
+            Point p = markChange(gas.lastVector());
+            drawLine(p.x - 2, p.y, p.x + 2, p.y);
+            drawLine(p.x, p.y - 2, p.x, p.y + 2);
 
             repaint();
 
@@ -137,6 +147,21 @@ public class Canvas implements Runnable
         return canvas.getSize();
     }
 
+    public double zoom(double delta) {
+        zoom += delta;
+        return zoom;
+    }
+
+    public int panX(int delta) {
+        panX += delta;
+        return panX;
+    }
+
+    public int panY(int delta) {
+        panY += delta;
+        return panY;
+    }
+
     /************************************************************************
      * Nested class CanvasPane - the actual canvas component contained in the
      * Canvas frame. This is essentially a JPanel with added capability to
@@ -147,6 +172,54 @@ public class Canvas implements Runnable
         public void paint(Graphics g)
         {
             g.drawImage(canvasImage, 0, 0, null);
+        }
+    }
+
+    private class MoveKeyListener implements KeyListener {
+        private Canvas c;
+
+        public MoveKeyListener(Canvas c) {
+            this.c = c;
+        }
+
+        public void keyPressed(KeyEvent e) {
+            System.out.println(e.getKeyCode());
+
+            switch (e.getKeyCode()) {
+            case 107: // Key +
+                c.zoom(0.1);
+                break;
+
+            case 109: // Key -
+                c.zoom(-0.1);
+                break;
+
+            case 37: // Key <-
+                c.panX(5);
+                break;
+
+            case 39: // Key ->
+                c.panX(-5);
+                break;
+
+            case 38: // Key <-
+                c.panY(5);
+                break;
+
+            case 40: // Key ->
+                c.panY(-5);
+                break;
+            }
+        }
+
+        public void keyReleased(KeyEvent arg0) {
+
+            
+        }
+
+        public void keyTyped(KeyEvent arg0) {
+
+            
         }
     }
 }
