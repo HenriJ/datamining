@@ -122,7 +122,7 @@ public class NeuralGas implements Runnable{
             
             // Increment edges from s
             s.incrementEdges();
-            s.removeOldEdges(100);
+            s.removeOldEdges(50);
             
         	// Add or reset the edge to 0 between s and t
             s.addEdge(t);
@@ -137,7 +137,7 @@ public class NeuralGas implements Runnable{
         		nodes.remove(n);
         	}
             
-        	if(age % 300 == 0)
+        	if(age % 200 == 0)
         	{
         		// Look for the node with largest error
         		Node u = null;

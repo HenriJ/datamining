@@ -14,7 +14,7 @@ public class Test {
 
         DbDistribution dbd = new DbDistribution("riton", "datamining", "datamining", "errr", 2);
         
-        NeuralGas gas = new NeuralGas(dbd, 16, 900000);
+        NeuralGas gas = new NeuralGas(dbd, 16, 500000);
 
         Canvas c = new Canvas("Nodes", gas, W, H, 30);
     }
