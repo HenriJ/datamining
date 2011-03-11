@@ -16,9 +16,17 @@ public class NeuralGas implements Runnable{
     private int currentId = 0;
     private int nanosleep;
     private int criterion;
-
     private double[] x;
 
+    // Parameters
+    private double e_w = 0.1;
+    private double e_n = 0.01;
+    private int maxAge = 50;
+    private int maxNodes = 100;
+    private int insertInterval = 200;
+    private double alpha = 0.5;
+    private double beta = 0.05;
+    
     public NeuralGas(Distribution distribution, int criterion, int nanosleep) {
         this.distribution = distribution;
         this.criterion = criterion;
@@ -117,16 +125,16 @@ public class NeuralGas implements Runnable{
             s.incrementError(ds);
             
             // Attract it
-            s.attract(x,0.1);	// e_w factor
+            s.attract(x,e_w);	// e_w factor
             
             // Attract connected nodes
             for(Node n : s.neighbours()) {
-            	n.attract(x,0.01);	// e_n factor
+            	n.attract(x,e_n);	// e_n factor
             }
             
             // Increment edges from s
             s.incrementEdges();
-            s.removeOldEdges(50);
+            s.removeOldEdges(maxAge);
             
         	// Add or reset the edge to 0 between s and t
             s.addEdge(t);
@@ -141,7 +149,7 @@ public class NeuralGas implements Runnable{
         		nodes.remove(n);
         	}
             
-        	if(age % 200 == 0 && nodes.size() < 100)
+        	if(age % insertInterval == 0 && nodes.size() < maxNodes)
         	{
         		// Look for the node with largest error
         		Node u = null;
@@ -164,13 +172,13 @@ public class NeuralGas implements Runnable{
         		}
         		
         		// Create a new node between u and v
-        		Node r = u.createNode(v,currentId++, 0.5);
+        		Node r = u.createNode(v,currentId++, alpha);
         		nodes.add(r);
         	}
         	
         	// Decrease the error of all nodes
         	for(Node n : nodes) {
-        		n.decreaseError(0.05);
+        		n.decreaseError(beta);
         	}
         	
             try {

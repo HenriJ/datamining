@@ -40,9 +40,9 @@ public class Test {
 
         //Distribution d = makeDisc();
 
-        Distribution d = makeChibre();
+        //Distribution d = makeChibre();
 
-        //Distribution d = makeU();
+        Distribution d = makeU();
 
         //Distribution d = makeDb();
 

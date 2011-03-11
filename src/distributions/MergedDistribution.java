@@ -14,7 +14,7 @@ public class MergedDistribution implements Distribution {
     }
 
     public int dimension() {
-        return 2;
+        return distributions.get(0).dimension();
     }
 
     public double[] generateVector() {
