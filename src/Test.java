@@ -28,8 +28,12 @@ public class Test {
         return new MergedDistribution(r1, r2, r3, r4);
     }
 
-    public static Distribution makeDb() throws SQLException {
-        return new DbDistribution("riton", "datamining", "datamining", "errr", 3);
+    public static Distribution makeSeries() throws SQLException {
+        return new SeriesDistribution("riton", "datamining", "datamining", "errr", 3);
+    }
+
+    public static Distribution makeFkz() throws SQLException {
+        return new FkzDistribution("riton", "datamining", "datamining", "errr");
     }
 
     public static void main(String[] args) throws SQLException {
@@ -44,9 +48,11 @@ public class Test {
 
         Distribution d = makeU();
 
-        //Distribution d = makeDb();
+        //Distribution d = makeSeries();
 
-        NeuralGas gas = new NeuralGas(d, 16, 500000);
+        //Distribution d = makeFkz();
+
+        NeuralGas gas = new NeuralGas(d, 2, 1);
 
         Canvas c = new Canvas("Nodes", gas, W, H, 30);
     }
