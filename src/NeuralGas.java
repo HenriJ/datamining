@@ -33,6 +33,7 @@ public class NeuralGas implements Runnable {
     private double alpha = 0.5;
     private double beta = 0.05;
     private int lifeexpectency = 10000;
+    private int poison = 5;
 
     public NeuralGas(Distribution distribution, int criterion, int nanosleep) {
         this.distribution = distribution;
@@ -153,7 +154,7 @@ public class NeuralGas implements Runnable {
             // Remove old nodes
             if (lifeexpectency > 0) {
                 for (Node n : nodes) {
-                        n.incrementAge(r.nextInt((n.error() > meanError) ? 5 : 2));
+                        n.incrementAge(r.nextInt((n.error() > meanError) ? poison : 2));
                         if (n.age() == lifeexpectency) {
                             Set<Node> edges = new LinkedHashSet<Node>(n.neighbours());
                             for (Node nn : edges) {
