@@ -1,15 +1,17 @@
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.Stack;
 
 import distributions.Distribution;
 
 
-public class NeuralGas implements Runnable{
-	
-	private Thread T;
+public class NeuralGas implements Runnable {
+
+    private Thread T;
     public List<Node> nodes;
     private Distribution distribution;
     private int age;
@@ -17,6 +19,10 @@ public class NeuralGas implements Runnable{
     private int nanosleep;
     private int criterion;
     private double[] x;
+
+    private Random r = new Random();
+
+    private double meanError;
 
     // Parameters
     private double e_w = 0.1;
@@ -26,7 +32,8 @@ public class NeuralGas implements Runnable{
     private int insertInterval = 200;
     private double alpha = 0.5;
     private double beta = 0.05;
-    
+    private int lifeexpectency = 10000;
+
     public NeuralGas(Distribution distribution, int criterion, int nanosleep) {
         this.distribution = distribution;
         this.criterion = criterion;
@@ -95,6 +102,7 @@ public class NeuralGas implements Runnable{
 
             if (age % 1000 == 0) {
                 if (isCriterionMet()) {
+                    System.out.println("Iter: " + age);
                     break;
                 }
             }
@@ -138,29 +146,49 @@ public class NeuralGas implements Runnable{
             
         	// Add or reset the edge to 0 between s and t
             s.addEdge(t);
-            
-            // Remove nodes without edges
+
+            // Nodes to be removed
             Set<Node> remove = new HashSet<Node>();
-            for(Node n : nodes) {
+
+            // Remove old nodes
+            if (lifeexpectency > 0) {
+                for (Node n : nodes) {
+                        n.incrementAge(r.nextInt((n.error() > meanError) ? 5 : 2));
+                        if (n.age() == lifeexpectency) {
+                            Set<Node> edges = new LinkedHashSet<Node>(n.neighbours());
+                            for (Node nn : edges) {
+                                n.removeEdge(nn);
+                            }
+                        }
+                }
+            }
+
+            // Remove nodes without edges
+            for (Node n : nodes) {
             	if(n.neighbours().isEmpty())
             		remove.add(n);
             }
+
         	for(Node n : remove) {
         		nodes.remove(n);
         	}
-            
+
         	if(age % insertInterval == 0 && nodes.size() < maxNodes)
         	{
         		// Look for the node with largest error
         		Node u = null;
             	double maxError = 0;
+            	meanError = 0;
         		for(Node n : nodes) {
+        		    meanError += n.error();
         			if(n.error() > maxError) {
         				u = n;
         				maxError = n.error();
         			}
         		}
-        		
+
+        		meanError /= nodes.size();
+
         		// Look for the neighbour of u with largest error
         		Node v = null;
             	maxError = 0;
@@ -170,21 +198,23 @@ public class NeuralGas implements Runnable{
         				maxError = v.error();
         			}
         		}
-        		
+
         		// Create a new node between u and v
         		Node r = u.createNode(v,currentId++, alpha);
         		nodes.add(r);
         	}
-        	
+
         	// Decrease the error of all nodes
         	for(Node n : nodes) {
         		n.decreaseError(beta);
         	}
-        	
-            try {
-                Thread.sleep(0, nanosleep);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+
+            if (nanosleep > 0) {
+                try {
+                    Thread.sleep(0, nanosleep);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

@@ -11,6 +11,8 @@ public class Node
     private HashMap<Node,Integer> edges;
     double error;
     
+    private int age;
+    
     public Node(int id, double[] x)
     {
         this.id = id;
@@ -18,6 +20,7 @@ public class Node
         w = x;
         edges = new HashMap<Node,Integer>();
         error = 0;
+        age = 0;
     }
 
     public double getId() {
@@ -86,6 +89,10 @@ public class Node
     	error*= (1-beta);
     }
     
+    public void incrementAge(int a) {
+        age += a;
+    }
+    
     public void move(double[] v) {
     	for(int i = 0; i < v.length; i++) {
     		w[i]+= v[i];
@@ -116,4 +123,9 @@ public class Node
     	
     	return r;
     }
+
+    public int age() {
+        return age;
+    }
+
 }
