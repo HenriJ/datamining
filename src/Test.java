@@ -52,7 +52,7 @@ public class Test {
 
         //Distribution d = makeFkz();
 
-        NeuralGas gas = new NeuralGas(d, 2, 1);
+        NeuralGas gas = new NeuralGas(d, 2, 5000, new Parameters());
 
         Canvas c = new Canvas("Nodes", gas, W, H, 30);
     }
