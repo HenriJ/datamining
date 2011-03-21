@@ -1,5 +1,9 @@
 import java.sql.SQLException;
 
+import classes.Canvas;
+import classes.NeuralGas;
+import classes.Parameters;
+
 import distributions.*;
 
 public class Test {

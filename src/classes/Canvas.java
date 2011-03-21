@@ -1,3 +1,4 @@
+package classes;
 import javax.swing.*;
 
 import distributions.Distribution;

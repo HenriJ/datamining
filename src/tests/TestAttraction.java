@@ -1,6 +1,9 @@
+package tests;
+
+import classes.*;
 import distributions.*;
 
-public class TestLifeExpectancy {
+public class TestAttraction {
 
     public static Distribution makeU() {
         Distribution r1 = new RectDistribution(100, 100, 600, 100);
@@ -17,6 +20,9 @@ public class TestLifeExpectancy {
 
         Distribution d = makeU();
 
-        NeuralGas gas = new NeuralGas(d, 2, 0, Parameters.life(Integer.parseInt(args[0])));
+        double e_w = (args.length > 0) ? Integer.parseInt(args[0]) : 0.1;
+        double e_n = (args.length > 1) ? Integer.parseInt(args[1]) : 0.01;
+
+        NeuralGas gas = new NeuralGas(d, 2, 0, Parameters.attraction(e_w, e_n));
     }
 }
