@@ -15,14 +15,6 @@ public class Test {
         return new DiscDistribution(200, 200, 100);
     }
 
-    public static Distribution makeChibre() {
-        Distribution d1 = new DiscDistribution(300, 500, 100);
-        Distribution d2 = new DiscDistribution(500, 500, 100);
-        Distribution d3 = new RectDistribution(325, 50, 150, 350);
-
-        return new MergedDistribution(d1, d2, d3);
-    }
-
     public static Distribution makeU() {
         Distribution r1 = new RectDistribution(100, 100, 600, 100);
         Distribution r2 = new RectDistribution(100, 200, 100, 200);
@@ -39,6 +31,10 @@ public class Test {
     public static Distribution makeFkz() throws SQLException {
         return new FkzDistribution("riton", "datamining", "datamining", "errr");
     }
+    
+    public static Distribution makeMoving() throws SQLException {
+        return new MovingDistribution(200, 200, 100, 1024, 768);
+    }
 
     public static void main(String[] args) throws SQLException {
         int W = 1024;
@@ -48,15 +44,17 @@ public class Test {
 
         //Distribution d = makeDisc();
 
-        //Distribution d = makeChibre();
-
-        Distribution d = makeU();
+        //Distribution d = makeU();
 
         //Distribution d = makeSeries();
 
         //Distribution d = makeFkz();
+        
+        Distribution d = makeMoving();
 
-        NeuralGas gas = new NeuralGas(d, 2, 5000, new Parameters());
+        int lifeexpectency = (args.length > 0) ? Integer.parseInt(args[0]) : 0;
+
+        NeuralGas gas = new NeuralGas(d, 20, 50, Parameters.life(lifeexpectency));
 
         Canvas c = new Canvas("Nodes", gas, W, H, 30);
     }

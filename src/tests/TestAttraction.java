@@ -20,9 +20,11 @@ public class TestAttraction {
 
         Distribution d = makeU();
 
-        double e_w = (args.length > 0) ? Integer.parseInt(args[0]) : 0.1;
-        double e_n = (args.length > 1) ? Integer.parseInt(args[1]) : 0.01;
+        double e_w = (args.length > 0) ? Double.parseDouble(args[0]) : 0.1;
+        double e_n = (args.length > 1) ? Double.parseDouble(args[1]) : 0.01;
 
         NeuralGas gas = new NeuralGas(d, 2, 0, Parameters.attraction(e_w, e_n));
+
+        //Canvas c = new Canvas("Nodes", gas, W, H, 30);
     }
 }

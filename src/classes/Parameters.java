@@ -6,7 +6,7 @@ public class Parameters {
     public double e_w = 0.1;
 
     // Attraction des voisins
-    public double e_n = 0.01;
+    public double e_n = 0.006;
 
     // Age max des arrêtes
     public int maxAge = 50;
